@@ -60,4 +60,7 @@ const (
 	LogSearchQueryAuthToken                      = "LOGSEARCH_QUERY_AUTH_TOKEN"
 	SlashSeparator                               = "/"
 	LocalAddress                                 = "127.0.0.1"
+
+	// Constants for auth
+	ConsoleOpenIDConfig = "CONSOLE_OPENID_CONFIG"
 )
