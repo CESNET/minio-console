@@ -19,6 +19,8 @@ package api
 import (
 	"crypto/tls"
 	"crypto/x509"
+	"encoding/base64"
+	"encoding/json"
 	"net"
 	"net/http"
 	"strconv"
@@ -100,6 +102,21 @@ func getMinIOServer() string {
 
 func GetMinIORegion() string {
 	return strings.TrimSpace(env.Get(ConsoleMinIORegion, ""))
+}
+
+func GetOpenIDProviders() oauth2.OpenIDPCfg {
+	encodedConf := env.Get(ConsoleOpenIDConfig, "")
+	decodedConf, err := base64.StdEncoding.DecodeString(encodedConf)
+	if err != nil {
+		panic(err)
+	}
+
+	var cfg oauth2.OpenIDPCfg
+	if err := json.Unmarshal(decodedConf, &cfg); err != nil {
+		panic(err)
+	}
+
+	return cfg
 }
 
 func getMinIOEndpoint() string {

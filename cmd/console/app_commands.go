@@ -73,6 +73,7 @@ func StartServer(ctx *cli.Context) error {
 	server.WriteTimeout = 0
 	api.Port = strconv.Itoa(server.Port)
 	api.Hostname = server.Host
+	api.GlobalMinIOConfig = api.MinIOConfig{OpenIDProviders: api.GetOpenIDProviders()}
 
 	if len(api.GlobalPublicCerts) > 0 {
 		// If TLS certificates are provided enforce the HTTPS schema, meaning console will redirect
