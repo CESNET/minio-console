@@ -17,6 +17,7 @@
 package api
 
 import (
+	"github.com/minio/console/pkg/auth/idp/oauth2"
 	"os"
 	"testing"
 
@@ -388,6 +389,70 @@ func Test_getConsoleDevMode(t *testing.T) {
 			os.Setenv(ConsoleDevMode, tt.args.env)
 			assert.Equalf(t, tt.want, getConsoleDevMode(), "getConsoleDevMode()")
 			os.Unsetenv(ConsoleDevMode)
+		})
+	}
+}
+
+func TestGetOpenIDProviders(t *testing.T) {
+	type args struct {
+		env string
+	}
+	tests := []struct {
+		name string
+		args args
+		want oauth2.OpenIDPCfg
+	}{
+		{
+			name: "value not set",
+			args: args{
+				env: "",
+			},
+			want: nil,
+		},
+		{
+			name: "valid config",
+			args: args{
+				//{
+				// "Keycloak": {
+				//   "URL": "http://localhost:8080/realms/ceph/.well-known/openid-configuration",
+				//   "DisplayName": "My IdP",
+				//   "ClientID": "minio-console",
+				//   "ClientSecret": "secret-generated-by-idp",
+				//   "HMACSalt": "c2380225-0891-49cb-b0ac-62d1c3f41e09",
+				//   "HMACPassphrase": "some-secret-pass",
+				//   "Scopes": "openid,profile,email,minio-authorization",
+				//   "Userinfo": false,
+				//   "RedirectCallbackDynamic": true,
+				//   "RedirectCallback": "http://golocalhost:9100/oauth_callback",
+				//   "EndSessionEndpoint": "http://localhost:8080/realms/ceph/protocol/openid-connect/logout",
+				//   "RoleArn": "arn:aws:iam:::role/federated-users"
+				// }
+				//}
+				env: "ewoJCQkJICJLZXljbG9hayI6IHsgIC8vIE5hbWUgb2YgT0lEQyBwcm92aWRlcgoJCQkJICAgIlVSTCI6ICJodHRwOi8vbG9jYWxob3N0OjgwODAvcmVhbG1zL2NlcGgvLndlbGwta25vd24vb3BlbmlkLWNvbmZpZ3VyYXRpb24iLAoJCQkJICAgIkRpc3BsYXlOYW1lIjogIk15IElkUCIsCgkJCQkgICAiQ2xpZW50SUQiOiAibWluaW8tY29uc29sZSIsCgkJCQkgICAiQ2xpZW50U2VjcmV0IjogInNlY3JldC1nZW5lcmF0ZWQtYnktaWRwIiwKCQkJCSAgICJITUFDU2FsdCI6ICJjMjM4MDIyNS0wODkxLTQ5Y2ItYjBhYy02MmQxYzNmNDFlMDkiLAoJCQkJICAgIkhNQUNQYXNzcGhyYXNlIjogInNvbWUtc2VjcmV0LXBhc3MiLAoJCQkJICAgIlNjb3BlcyI6ICJvcGVuaWQscHJvZmlsZSxlbWFpbCxtaW5pby1hdXRob3JpemF0aW9uIiwKCQkJCSAgICJVc2VyaW5mbyI6IGZhbHNlLAoJCQkJICAgIlJlZGlyZWN0Q2FsbGJhY2tEeW5hbWljIjogdHJ1ZSwKCQkJCSAgICJSZWRpcmVjdENhbGxiYWNrIjogImh0dHA6Ly9nb2xvY2FsaG9zdDo5MTAwL29hdXRoX2NhbGxiYWNrIiwKCQkJCSAgICJFbmRTZXNzaW9uRW5kcG9pbnQiOiAiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9jZXBoL3Byb3RvY29sL29wZW5pZC1jb25uZWN0L2xvZ291dCIsCgkJCQkgICAiUm9sZUFybiI6ICJhcm46YXdzOmlhbTo6OnJvbGUvZmVkZXJhdGVkLXVzZXJzIgoJCQkJIH0KCQkJCX0=",
+			},
+			want: oauth2.OpenIDPCfg{
+				"Keycloak": oauth2.ProviderConfig{
+					URL:                     "http://localhost:8080/realms/ceph/.well-known/openid-configuration",
+					DisplayName:             "My IdP",
+					ClientID:                "minio-console",
+					ClientSecret:            "secret-generated-by-idp",
+					HMACSalt:                "c2380225-0891-49cb-b0ac-62d1c3f41e09",
+					HMACPassphrase:          "some-secret-pass",
+					Scopes:                  "openid,profile,email,minio-authorization",
+					Userinfo:                false,
+					RedirectCallbackDynamic: true,
+					RedirectCallback:        "http://golocalhost:9100/oauth_callback",
+					EndSessionEndpoint:      "http://localhost:8080/realms/ceph/protocol/openid-connect/logout",
+					RoleArn:                 "arn:aws:iam:::role/federated-users",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(_ *testing.T) {
+			os.Setenv(ConsoleOpenIDConfig, tt.args.env)
+			assert.Equalf(t, tt.want, GetOpenIDProviders(), "GetSecureAllowedHosts()")
+			os.Unsetenv(ConsoleOpenIDConfig)
 		})
 	}
 }

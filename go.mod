@@ -41,6 +41,9 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
+// CESNET module overrides
+replace github.com/minio/minio-go/v7 => github.com/CESNET/minio-go/v7 v7.0.81-1
+
 require github.com/minio/pkg/v3 v3.0.22
 
 require (
