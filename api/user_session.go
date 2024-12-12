@@ -116,21 +116,22 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		condition.S3LocationConstraint.Name(): {GetMinIORegion()},
 	}
 
-	claims, err := getClaimsFromToken(session.STSSessionToken)
-	if err != nil {
-		return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
-	}
-
-	// Support all LDAP, JWT variables
-	for k, v := range claims {
-		vstr, ok := v.(string)
-		if !ok {
-			// skip all non-strings
-			continue
-		}
-		// store all claims from sessionToken
-		conditionValues[k] = []string{vstr}
-	}
+	// TODO: following is unsupported in Ceph, RadosGW doesn't use JWT with claims as session token
+	//claims, err := getClaimsFromToken(session.STSSessionToken)
+	//if err != nil {
+	//	return nil, ErrorWithContext(ctx, err, ErrInvalidSession)
+	//}
+	//
+	//// Support all LDAP, JWT variables
+	//for k, v := range claims {
+	//	vstr, ok := v.(string)
+	//	if !ok {
+	//		// skip all non-strings
+	//		continue
+	//	}
+	//	// store all claims from sessionToken
+	//	conditionValues[k] = []string{vstr}
+	//}
 
 	defaultActions := policy.IsAllowedActions("", "", conditionValues)
 
@@ -229,6 +230,8 @@ func getSessionResponse(ctx context.Context, session *models.Principal) (*models
 		for _, action := range val.ToSlice() {
 			resourceActions = append(resourceActions, string(action))
 		}
+		// TODO: Fix HACK just for POC - correctly needs to be passed from account info response
+		resourceActions = append(resourceActions, "s3:CreateBucket")
 		resourcePermissions[key] = resourceActions
 
 	}
