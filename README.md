@@ -51,7 +51,7 @@ All `console` needs is a Ceph user with certain privileges and the following set
 
 ```
 radosgw-admin user create --uid console --display-name "Minio console manager"
-radosgw-admin caps add --uid="console" --caps="oidc-provider=*"
+radosgw-admin caps add --uid="console" --caps="users=*;buckets=*;oidc-provider=*"
 ```
 
 ### 1. Create a role-policy for `S3Access1` role allowing console users to access S3 resources on a Ceph site
@@ -59,7 +59,6 @@ radosgw-admin caps add --uid="console" --caps="oidc-provider=*"
 > NOTE: this will allow access to all S3 resources (for testing)
 
 ```bash
-radosgw-admin role-policy put --role-name='S3Access1' --policy-name='console-policyrole' --policy-doc='{ "Statement": [ { "Effect": "Allow", "Action": ["s3:*"], "Resource": "arn:aws:s3:::*", "Sid": "" } ] }'
 ```
 
 > NOTE: Additionally, you can create policies to limit the privileges for `console` users, for example, if you
